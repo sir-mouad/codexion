@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   codexion.h                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
+/*   Updated: 2026/04/04 12:23:55 by mhadir           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef CODEXION_H
 # define CODEXION_H
 
@@ -56,5 +68,7 @@ void	print_burnout(t_sim *sim, int id);
 int		is_done(t_sim *sim);
 void	*coder_thread(void *arg);
 void	*monitor_thread(void *arg);
+int		is_valid(const char *s);
+int		parse(t_sim *sim, int ac, char **av);
 
 #endif

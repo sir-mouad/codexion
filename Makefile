@@ -1,11 +1,10 @@
 NAME	= codexion
 CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -pthread
-SRCDIR	= coders
-SRCS	= $(SRCDIR)/main.c $(SRCDIR)/utils.c \
-		  $(SRCDIR)/coder.c $(SRCDIR)/monitor.c
+CFLAGS	= -Wall -Wextra -Werror -pthread -g
+SRCS	= codexion.c utils.c coder.c monitor.c parce.c
 OBJS	= $(SRCS:.c=.o)
 
+.: all clean
 all: $(NAME)
 
 $(NAME): $(OBJS)
@@ -22,4 +21,3 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: all clean fclean re
