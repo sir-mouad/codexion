@@ -3,31 +3,19 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/04 12:24:06 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/07 11:01:56 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static int	init(t_sim *sim)
+static void	sim_init(t_sim *sim)
 {
-	int				i;
-	struct timeval	tv;
+	int	i;
 
-	gettimeofday(&tv, NULL);
-	sim->start = tv.tv_sec * 1000L + tv.tv_usec / 1000L;
-	sim->stop = 0;
-	sim->coders = malloc(sizeof(t_coder) * sim->n);
-	sim->dongle_taken = malloc(sizeof(int) * sim->n);
-	sim->dongle_free_at = malloc(sizeof(long) * sim->n);
-	if (!sim->coders || !sim->dongle_taken || !sim->dongle_free_at)
-		return (0);
-	pthread_mutex_init(&sim->lock, NULL);
-	pthread_mutex_init(&sim->print_lock, NULL);
-	pthread_cond_init(&sim->cond, NULL);
 	i = 0;
 	while (i < sim->n)
 	{
@@ -43,6 +31,24 @@ static int	init(t_sim *sim)
 		sim->coders[i].sim = sim;
 		i++;
 	}
+}
+
+static int	init(t_sim *sim)
+{
+	struct timeval	tv;
+
+	gettimeofday(&tv, NULL);
+	sim->start = tv.tv_sec * 1000L + tv.tv_usec / 1000L;
+	sim->stop = 0;
+	sim->coders = malloc(sizeof(t_coder) * sim->n);
+	sim->dongle_taken = malloc(sizeof(int) * sim->n);
+	sim->dongle_free_at = malloc(sizeof(long) * sim->n);
+	if (!sim->coders || !sim->dongle_taken || !sim->dongle_free_at)
+		return (0);
+	pthread_mutex_init(&sim->lock, NULL);
+	pthread_mutex_init(&sim->print_lock, NULL);
+	pthread_cond_init(&sim->cond, NULL);
+	sim_init(sim);
 	return (1);
 }
 
@@ -69,8 +75,8 @@ int	main(int ac, char **av)
 	i = 0;
 	while (i < sim.n)
 	{
-		pthread_create(&sim.coders[i].thread, NULL,
-			coder_thread, &sim.coders[i]);
+		pthread_create(&sim.coders[i].thread, NULL, coder_thread,
+			&sim.coders[i]);
 		i++;
 	}
 	pthread_create(&sim.monitor, NULL, monitor_thread, &sim);
