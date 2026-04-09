@@ -41,6 +41,7 @@ static int	try_lock_resources(t_coder *coder, t_sim *sim, int idx)
 	if (can_grab(sim, idx))
 	{
 		coder->state = COMPILING;
+		coder->last_compile = now_ms(sim);
 		sim->dongle_taken[coder->left] = 1;
 		sim->dongle_taken[coder->right] = 1;
 		return (1);
@@ -80,12 +81,13 @@ static int	do_coder_tasks(t_coder *coder, t_sim *sim)
 {
 	if (!grab_dongles(coder))
 		return (0);
-	coder->last_compile = now_ms(sim);
 	print_log(sim, coder->id, "has taken a dongle");
 	print_log(sim, coder->id, "has taken a dongle");
 	print_log(sim, coder->id, "is compiling");
 	ft_sleep(sim->t_compile);
+	pthread_mutex_lock(&sim->lock);
 	coder->compiles++;
+	pthread_mutex_unlock(&sim->lock);
 	release_dongles(coder);
 	if (is_done(sim))
 		return (0);

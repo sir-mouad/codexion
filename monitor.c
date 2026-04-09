@@ -39,20 +39,25 @@ static void	wake_everyone(t_sim *sim)
 static int	check_burnout(t_sim *sim)
 {
 	int		i;
+	int		id;
 	long	elapsed;
 
+	pthread_mutex_lock(&sim->lock);
 	i = 0;
 	while (i < sim->n)
 	{
 		elapsed = now_ms(sim) - sim->coders[i].last_compile;
 		if (elapsed >= sim->burnout)
 		{
-			print_burnout(sim, sim->coders[i].id);
+			id = sim->coders[i].id;
+			pthread_mutex_unlock(&sim->lock);
+			print_burnout(sim, id);
 			wake_everyone(sim);
 			return (1);
 		}
 		i++;
 	}
+	pthread_mutex_unlock(&sim->lock);
 	return (0);
 }
 
@@ -69,8 +74,9 @@ void	*monitor_thread(void *arg)
 			return (pthread_mutex_unlock(&sim->lock), NULL);
 		if (all_compiled(sim))
 		{
+			pthread_mutex_unlock(&sim->lock);
 			wake_everyone(sim);
-			return (pthread_mutex_unlock(&sim->lock), NULL);
+			return (NULL);
 		}
 		pthread_mutex_unlock(&sim->lock);
 		if (check_burnout(sim))

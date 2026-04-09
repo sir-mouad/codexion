@@ -23,7 +23,6 @@ Each coder runs as an independent POSIX thread and cycles through three phases: 
 ### Compilation
 
 ```bash
-cd codexion/
 make
 ```
 

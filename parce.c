@@ -33,8 +33,8 @@ int	is_valid(const char *s)
 int	parse(t_sim *sim, int ac, char **av)
 {
 	if (ac != 9)
-		return (fprintf(stderr, "Usage: codexion n burnout compile"
-				" debug refactor need cooldown fifo|edf\n"), 0);
+		return (fprintf(stderr, "./codexion n burnout compile"
+				" debug refactor need cooldown [fifo|edf]\n"), 0);
 	if (!is_valid(av[1]) || !is_valid(av[2]) || !is_valid(av[3])
 		|| !is_valid(av[4]) || !is_valid(av[5])
 		|| !is_valid(av[6]) || !is_valid(av[7]))
