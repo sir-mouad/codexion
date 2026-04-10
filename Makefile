@@ -1,6 +1,6 @@
 NAME	= codexion
 CC		= cc
-CFLAGS	= -Wall -Wextra -Werror -pthread -g
+CFLAGS	= -Wall -Wextra -Werror -pthread
 SRCS	= codexion.c utils.c coder.c monitor.c parce.c coder_utils.c
 OBJS	= $(SRCS:.c=.o)
 
@@ -20,4 +20,3 @@ fclean: clean
 	rm -f $(NAME)
 
 re: fclean all
-

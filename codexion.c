@@ -62,6 +62,34 @@ static void	cleanup(t_sim *sim)
 	free(sim->dongle_free_at);
 }
 
+static int	create_coder_thread(t_sim *sim)
+{
+	int (i), (j);
+	i = 0;
+	j = 0;
+	while (i < sim->n)
+	{
+		if (pthread_create(&sim->coders[i].thread, NULL, coder_thread,
+				&sim->coders[i]) != 0)
+		{
+			pthread_mutex_lock(&sim->lock);
+			sim->stop = 1;
+			pthread_cond_broadcast(&sim->cond);
+			pthread_mutex_unlock(&sim->lock);
+			j = 0;
+			while (j < i)
+			{
+				pthread_join(sim->coders[j].thread, NULL);
+				j++;
+			}
+			return (fprintf(stderr, "Error: pthread_create failed\n"),
+				cleanup(sim), 1);
+		}
+		i++;
+	}
+	return (0);
+}
+
 int	main(int ac, char **av)
 {
 	t_sim	sim;
@@ -72,21 +100,18 @@ int	main(int ac, char **av)
 		return (1);
 	if (!init(&sim))
 		return (fprintf(stderr, "Error: malloc failed\n"), 1);
+	if (create_coder_thread(&sim))
+		return (1);
+	if (pthread_create(&sim.monitor, NULL, monitor_thread, &sim) != 0)
+		return (fprintf(stderr, "Error: monitor_create failed\n"), 1);
 	i = 0;
 	while (i < sim.n)
 	{
-		pthread_create(&sim.coders[i].thread, NULL, coder_thread,
-			&sim.coders[i]);
+		if (pthread_join(sim.coders[i].thread, NULL))
+			return (fprintf(stderr, "Error: pthread_join failed\n"), 1);
 		i++;
 	}
-	pthread_create(&sim.monitor, NULL, monitor_thread, &sim);
-	i = 0;
-	while (i < sim.n)
-	{
-		pthread_join(sim.coders[i].thread, NULL);
-		i++;
-	}
-	pthread_join(sim.monitor, NULL);
-	cleanup(&sim);
-	return (0);
+	if (pthread_join(sim.monitor, NULL) != 0)
+		return (fprintf(stderr, "Error: pthread_join failed\n"), 1);
+	return (cleanup(&sim), 0);
 }
