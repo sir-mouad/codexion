@@ -27,10 +27,12 @@ void	ft_sleep(long ms)
 
 void	print_log(t_sim *sim, int id, char *msg)
 {
+	pthread_mutex_lock(&sim->lock);
 	pthread_mutex_lock(&sim->print_lock);
 	if (!sim->stop)
 		printf("%ld %d %s\n", now_ms(sim), id, msg);
 	pthread_mutex_unlock(&sim->print_lock);
+	pthread_mutex_unlock(&sim->lock);
 }
 
 void	print_burnout(t_sim *sim, int id)

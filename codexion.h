@@ -72,5 +72,6 @@ int						is_valid(const char *s);
 int						parse(t_sim *sim, int ac, char **av);
 int						has_priority(t_sim *sim, int a, int b);
 void					release_dongles(t_coder *coder);
-
+char					*ft_itoa(long n);
+int						ft_atoi(const char *str, char *type);
 #endif

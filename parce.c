@@ -19,7 +19,7 @@ int	is_valid(const char *s)
 	i = 0;
 	if (!s || !s[0])
 		return (0);
-	if (s[i] == '+')
+	if (s[i] == '+' && (s[i + 1] < '0' || s[i + 1] > '9'))
 		i++;
 	while (s[i])
 	{
@@ -30,22 +30,43 @@ int	is_valid(const char *s)
 	return (1);
 }
 
+static int	check_overflow(t_sim *sim)
+{
+	if (sim->n == -1)
+		return (1);
+	if (sim->burnout == -1)
+		return (1);
+	if (sim->t_compile == -1)
+		return (1);
+	if (sim->t_debug == -1)
+		return (1);
+	if (sim->t_refactor == -1)
+		return (1);
+	if (sim->need == -1)
+		return (1);
+	if (sim->cooldown == -1)
+		return (1);
+	return (0);
+}
+
 int	parse(t_sim *sim, int ac, char **av)
 {
 	if (ac != 9)
 		return (fprintf(stderr, "./codexion n burnout compile"
 				" debug refactor need cooldown [fifo|edf]\n"), 0);
 	if (!is_valid(av[1]) || !is_valid(av[2]) || !is_valid(av[3])
-		|| !is_valid(av[4]) || !is_valid(av[5])
-		|| !is_valid(av[6]) || !is_valid(av[7]))
+		|| !is_valid(av[4]) || !is_valid(av[5]) || !is_valid(av[6])
+		|| !is_valid(av[7]))
 		return (fprintf(stderr, "Error: invalid argument\n"), 0);
-	sim->n = atoi(av[1]);
-	sim->burnout = atoi(av[2]);
-	sim->t_compile = atoi(av[3]);
-	sim->t_debug = atoi(av[4]);
-	sim->t_refactor = atoi(av[5]);
-	sim->need = atoi(av[6]);
-	sim->cooldown = atoi(av[7]);
+	sim->n = ft_atoi(av[1], "int");
+	sim->burnout = ft_atoi(av[2], "long");
+	sim->t_compile = ft_atoi(av[3], "long");
+	sim->t_debug = ft_atoi(av[4], "long");
+	sim->t_refactor = ft_atoi(av[5], "long");
+	sim->need = ft_atoi(av[6], "int");
+	sim->cooldown = ft_atoi(av[7], "long");
+	if (check_overflow(sim))
+		return (fprintf(stderr, "Error: overflow problem\n"), 0);
 	if (strcmp(av[8], "fifo") == 0)
 		sim->edf = 0;
 	else if (strcmp(av[8], "edf") == 0)

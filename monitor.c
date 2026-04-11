@@ -51,8 +51,8 @@ static int	check_burnout(t_sim *sim)
 		{
 			id = sim->coders[i].id;
 			pthread_mutex_unlock(&sim->lock);
-			print_burnout(sim, id);
 			wake_everyone(sim);
+			print_burnout(sim, id);
 			return (1);
 		}
 		i++;

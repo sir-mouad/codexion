@@ -12,6 +12,25 @@
 
 #include "codexion.h"
 
+static void	cleanup(t_sim *sim, int free_all)
+{
+	if (!free_all)
+	{
+		free(sim->coders);
+		free(sim->dongle_taken);
+		free(sim->dongle_free_at);
+	}
+	else
+	{
+		pthread_mutex_destroy(&sim->lock);
+		pthread_mutex_destroy(&sim->print_lock);
+		pthread_cond_destroy(&sim->cond);
+		free(sim->coders);
+		free(sim->dongle_taken);
+		free(sim->dongle_free_at);
+	}
+}
+
 static void	sim_init(t_sim *sim)
 {
 	int	i;
@@ -44,22 +63,14 @@ static int	init(t_sim *sim)
 	sim->dongle_taken = malloc(sizeof(int) * sim->n);
 	sim->dongle_free_at = malloc(sizeof(long) * sim->n);
 	if (!sim->coders || !sim->dongle_taken || !sim->dongle_free_at)
-		return (0);
-	pthread_mutex_init(&sim->lock, NULL);
-	pthread_mutex_init(&sim->print_lock, NULL);
-	pthread_cond_init(&sim->cond, NULL);
+		return (fprintf(stderr, "Error: malloc failed\n"), 0);
 	sim_init(sim);
+	if (pthread_mutex_init(&sim->lock, NULL) != 0
+		|| pthread_mutex_init(&sim->print_lock, NULL) != 0
+		|| pthread_cond_init(&sim->cond, NULL) != 0)
+		return (cleanup(sim, 0), fprintf(stderr,
+				"Error: mutex or cond failed\n"), 0);
 	return (1);
-}
-
-static void	cleanup(t_sim *sim)
-{
-	pthread_mutex_destroy(&sim->lock);
-	pthread_mutex_destroy(&sim->print_lock);
-	pthread_cond_destroy(&sim->cond);
-	free(sim->coders);
-	free(sim->dongle_taken);
-	free(sim->dongle_free_at);
 }
 
 static int	create_coder_thread(t_sim *sim)
@@ -83,7 +94,7 @@ static int	create_coder_thread(t_sim *sim)
 				j++;
 			}
 			return (fprintf(stderr, "Error: pthread_create failed\n"),
-				cleanup(sim), 1);
+				cleanup(sim, 1), 1);
 		}
 		i++;
 	}
@@ -99,7 +110,7 @@ int	main(int ac, char **av)
 	if (!parse(&sim, ac, av))
 		return (1);
 	if (!init(&sim))
-		return (fprintf(stderr, "Error: malloc failed\n"), 1);
+		return (1);
 	if (create_coder_thread(&sim))
 		return (1);
 	if (pthread_create(&sim.monitor, NULL, monitor_thread, &sim) != 0)
@@ -113,5 +124,5 @@ int	main(int ac, char **av)
 	}
 	if (pthread_join(sim.monitor, NULL) != 0)
 		return (fprintf(stderr, "Error: pthread_join failed\n"), 1);
-	return (cleanup(&sim), 0);
+	return (cleanup(&sim, 1), 0);
 }
