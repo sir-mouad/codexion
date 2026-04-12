@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parce.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:20:05 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/04 12:20:57 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/12 12:59:38 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,19 +32,10 @@ int	is_valid(const char *s)
 
 static int	check_overflow(t_sim *sim)
 {
-	if (sim->n == -1)
-		return (1);
-	if (sim->burnout == -1)
-		return (1);
-	if (sim->t_compile == -1)
-		return (1);
-	if (sim->t_debug == -1)
-		return (1);
-	if (sim->t_refactor == -1)
-		return (1);
-	if (sim->need == -1)
-		return (1);
-	if (sim->cooldown == -1)
+	if ((sim->n == -1) || (sim->burnout == -1)
+		|| (sim->t_compile == -1) || (sim->t_debug == -1)
+		|| (sim->t_refactor == -1) || (sim->need == -1)
+		|| (sim->cooldown == -1))
 		return (1);
 	return (0);
 }

@@ -6,7 +6,7 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/07 11:30:53 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/11 23:06:12 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
+#include <limits.h>
 
 # define WAITING 0
 # define COMPILING 1

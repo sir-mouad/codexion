@@ -6,7 +6,7 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/07 11:01:56 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/11 22:37:47 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -118,7 +118,7 @@ int	main(int ac, char **av)
 	i = 0;
 	while (i < sim.n)
 	{
-		if (pthread_join(sim.coders[i].thread, NULL))
+		if (pthread_join(sim.coders[i].thread, NULL) != 0)
 			return (fprintf(stderr, "Error: pthread_join failed\n"), 1);
 		i++;
 	}
