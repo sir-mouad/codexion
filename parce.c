@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parce.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:20:05 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/12 12:59:38 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/13 11:37:06 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,31 @@ static int	check_overflow(t_sim *sim)
 		|| (sim->cooldown == -1))
 		return (1);
 	return (0);
+}
+
+static int	ft_atoi(const char *str, char *type)
+{
+	int				i;
+	unsigned long	res;
+
+	i = 0;
+	res = 0;
+	while (str[i] == 32 || (str[i] >= 9 && str[i] <= 13))
+		i++;
+	if (str[i] == '+')
+		i++;
+	while (str[i] >= '0' && str[i] <= '9')
+	{
+		res = (res * 10) + (str[i] - '0');
+		if (strcmp(type, "int") == 0)
+			if (res > INT_MAX)
+				return (-1);
+		if (strcmp(type, "long") == 0)
+			if (res > LONG_MAX)
+				return (-1);
+		i++;
+	}
+	return (res);
 }
 
 int	parse(t_sim *sim, int ac, char **av)

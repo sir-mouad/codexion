@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/11 23:06:12 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/13 14:11:27 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
-#include <limits.h>
+# include <limits.h>
 
 # define WAITING 0
 # define COMPILING 1
@@ -73,6 +73,5 @@ int						is_valid(const char *s);
 int						parse(t_sim *sim, int ac, char **av);
 int						has_priority(t_sim *sim, int a, int b);
 void					release_dongles(t_coder *coder);
-char					*ft_itoa(long n);
-int						ft_atoi(const char *str, char *type);
+
 #endif
