@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coder.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:16 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/07 11:30:10 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/14 16:02:02 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int	try_lock_resources(t_coder *coder, t_sim *sim, int idx)
 {
 	if (can_grab(sim, idx))
 	{
-		coder->state = COMPILING;
+		coder->state = "COMPILING";
 		coder->last_compile = now_ms(sim);
 		sim->dongle_taken[coder->left] = 1;
 		sim->dongle_taken[coder->right] = 1;
@@ -57,7 +57,7 @@ static int	grab_dongles(t_coder *coder)
 
 	sim = coder->sim;
 	pthread_mutex_lock(&sim->lock);
-	coder->state = WAITING;
+	coder->state = "WAITING";
 	coder->waiting_since = now_ms(sim);
 	while (!sim->stop)
 	{
@@ -89,17 +89,17 @@ static int	do_coder_tasks(t_coder *coder, t_sim *sim)
 	coder->compiles++;
 	pthread_mutex_unlock(&sim->lock);
 	release_dongles(coder);
-	if (is_done(sim))
+	if (check_stop(sim))
 		return (0);
 	pthread_mutex_lock(&sim->lock);
-	coder->state = DEBUGGING;
+	coder->state = "DEBUGGING";
 	pthread_mutex_unlock(&sim->lock);
 	print_log(sim, coder->id, "is debugging");
 	ft_sleep(sim->t_debug);
-	if (is_done(sim))
+	if (check_stop(sim))
 		return (0);
 	pthread_mutex_lock(&sim->lock);
-	coder->state = REFACTORING;
+	coder->state = "REFACTORING";
 	pthread_mutex_unlock(&sim->lock);
 	print_log(sim, coder->id, "is refactoring");
 	ft_sleep(sim->t_refactor);
@@ -115,11 +115,11 @@ void	*coder_thread(void *arg)
 	sim = coder->sim;
 	if (sim->n == 1)
 	{
-		while (!is_done(sim))
+		while (!check_stop(sim))
 			ft_sleep(10);
 		return (NULL);
 	}
-	while (!is_done(sim))
+	while (!check_stop(sim))
 	{
 		if (!do_coder_tasks(coder, sim))
 			break ;

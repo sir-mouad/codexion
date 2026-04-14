@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   coder_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/08 10:39:07 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/08 10:39:32 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/14 15:58:28 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ int	has_priority(t_sim *sim, int a, int b)
 
 	ca = &sim->coders[a];
 	cb = &sim->coders[b];
-	if (cb->state != WAITING)
+	if (cb->state != 0)
 		return (1);
 	if (sim->edf)
 		return (ca->last_compile <= cb->last_compile);

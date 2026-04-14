@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   monitor.c                                          :+:      :+:    :+:   */
+/*   manage.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:39 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/07 11:36:06 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/14 15:21:27 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static int	all_compiled(t_sim *sim)
 	return (1);
 }
 
-static void	wake_everyone(t_sim *sim)
+static void	stop_all(t_sim *sim)
 {
 	pthread_mutex_lock(&sim->lock);
 	sim->stop = 1;
@@ -51,7 +51,7 @@ static int	check_burnout(t_sim *sim)
 		{
 			id = sim->coders[i].id;
 			pthread_mutex_unlock(&sim->lock);
-			wake_everyone(sim);
+			stop_all(sim);
 			print_burnout(sim, id);
 			return (1);
 		}
@@ -61,7 +61,7 @@ static int	check_burnout(t_sim *sim)
 	return (0);
 }
 
-void	*monitor_thread(void *arg)
+void	*manage_thread(void *arg)
 {
 	t_sim	*sim;
 
@@ -75,7 +75,7 @@ void	*monitor_thread(void *arg)
 		if (all_compiled(sim))
 		{
 			pthread_mutex_unlock(&sim->lock);
-			wake_everyone(sim);
+			stop_all(sim);
 			return (NULL);
 		}
 		pthread_mutex_unlock(&sim->lock);

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/11 22:37:47 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/14 16:01:45 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ static void	sim_init(t_sim *sim)
 		sim->coders[i].id = i + 1;
 		sim->coders[i].left = i;
 		sim->coders[i].right = (i + 1) % sim->n;
-		sim->coders[i].state = WAITING;
+		sim->coders[i].state = "WAITING";
 		sim->coders[i].compiles = 0;
 		sim->coders[i].last_compile = 0;
 		sim->coders[i].waiting_since = 0;
@@ -113,7 +113,7 @@ int	main(int ac, char **av)
 		return (1);
 	if (create_coder_thread(&sim))
 		return (1);
-	if (pthread_create(&sim.monitor, NULL, monitor_thread, &sim) != 0)
+	if (pthread_create(&sim.monitor, NULL, manage_thread, &sim) != 0)
 		return (fprintf(stderr, "Error: monitor_create failed\n"), 1);
 	i = 0;
 	while (i < sim.n)

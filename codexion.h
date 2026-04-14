@@ -6,7 +6,7 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/13 14:11:27 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/14 16:00:06 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,11 +21,6 @@
 # include <unistd.h>
 # include <limits.h>
 
-# define WAITING 0
-# define COMPILING 1
-# define DEBUGGING 2
-# define REFACTORING 3
-
 typedef struct s_sim	t_sim;
 
 typedef struct s_coder
@@ -33,7 +28,7 @@ typedef struct s_coder
 	int					id;
 	int					left;
 	int					right;
-	int					state;
+	char				*state;
 	int					compiles;
 	long				last_compile;
 	long				waiting_since;
@@ -66,9 +61,9 @@ long					now_ms(t_sim *sim);
 void					ft_sleep(long ms);
 void					print_log(t_sim *sim, int id, char *msg);
 void					print_burnout(t_sim *sim, int id);
-int						is_done(t_sim *sim);
+int						check_stop(t_sim *sim);
 void					*coder_thread(void *arg);
-void					*monitor_thread(void *arg);
+void					*manage_thread(void *arg);
 int						is_valid(const char *s);
 int						parse(t_sim *sim, int ac, char **av);
 int						has_priority(t_sim *sim, int a, int b);

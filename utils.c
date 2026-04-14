@@ -6,7 +6,7 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:42 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/04 12:15:43 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/14 15:22:10 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,7 +42,7 @@ void	print_burnout(t_sim *sim, int id)
 	pthread_mutex_unlock(&sim->print_lock);
 }
 
-int	is_done(t_sim *sim)
+int	check_stop(t_sim *sim)
 {
 	int	result;
 

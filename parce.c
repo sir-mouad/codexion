@@ -6,7 +6,7 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:20:05 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/13 11:37:06 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/14 13:44:19 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int	check_overflow(t_sim *sim)
 	return (0);
 }
 
-static int	ft_atoi(const char *str, char *type)
+static int	my_atoi(const char *str, char *type)
 {
 	int				i;
 	unsigned long	res;
@@ -74,13 +74,13 @@ int	parse(t_sim *sim, int ac, char **av)
 		|| !is_valid(av[4]) || !is_valid(av[5]) || !is_valid(av[6])
 		|| !is_valid(av[7]))
 		return (fprintf(stderr, "Error: invalid argument\n"), 0);
-	sim->n = ft_atoi(av[1], "int");
-	sim->burnout = ft_atoi(av[2], "long");
-	sim->t_compile = ft_atoi(av[3], "long");
-	sim->t_debug = ft_atoi(av[4], "long");
-	sim->t_refactor = ft_atoi(av[5], "long");
-	sim->need = ft_atoi(av[6], "int");
-	sim->cooldown = ft_atoi(av[7], "long");
+	sim->n = my_atoi(av[1], "int");
+	sim->burnout = my_atoi(av[2], "long");
+	sim->t_compile = my_atoi(av[3], "long");
+	sim->t_debug = my_atoi(av[4], "long");
+	sim->t_refactor = my_atoi(av[5], "long");
+	sim->need = my_atoi(av[6], "int");
+	sim->cooldown = my_atoi(av[7], "long");
 	if (check_overflow(sim))
 		return (fprintf(stderr, "Error: overflow problem\n"), 0);
 	if (strcmp(av[8], "fifo") == 0)
