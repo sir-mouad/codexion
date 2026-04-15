@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   coder.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:16 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/14 16:02:02 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/15 16:29:14 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static int	can_grab(t_sim *sim, int idx)
+static int	can_take(t_sim *sim, int id)
 {
 	int		left;
 	int		right;
@@ -20,25 +20,25 @@ static int	can_grab(t_sim *sim, int idx)
 	int		rn;
 	long	ms;
 
-	left = sim->coders[idx].left;
-	right = sim->coders[idx].right;
-	ln = (idx - 1 + sim->n) % sim->n;
-	rn = (idx + 1) % sim->n;
+	left = sim->coders[id].left;
+	right = sim->coders[id].right;
+	ln = (id - 1 + sim->n) % sim->n;
+	rn = (id + 1) % sim->n;
 	ms = now_ms(sim);
 	if (sim->dongle_taken[left] || ms < sim->dongle_free_at[left])
 		return (0);
 	if (sim->dongle_taken[right] || ms < sim->dongle_free_at[right])
 		return (0);
-	if (!has_priority(sim, idx, ln))
+	if (!can_go_first(sim, id, ln))
 		return (0);
-	if (!has_priority(sim, idx, rn))
+	if (!can_go_first(sim, id, rn))
 		return (0);
 	return (1);
 }
 
-static int	try_lock_resources(t_coder *coder, t_sim *sim, int idx)
+static int	lock_dongles(t_coder *coder, t_sim *sim, int id)
 {
-	if (can_grab(sim, idx))
+	if (can_take(sim, id))
 	{
 		coder->state = "COMPILING";
 		coder->last_compile = now_ms(sim);
@@ -49,7 +49,7 @@ static int	try_lock_resources(t_coder *coder, t_sim *sim, int idx)
 	return (0);
 }
 
-static int	grab_dongles(t_coder *coder)
+static int	take_dongles(t_coder *coder)
 {
 	t_sim			*sim;
 	struct timespec	ts;
@@ -61,7 +61,7 @@ static int	grab_dongles(t_coder *coder)
 	coder->waiting_since = now_ms(sim);
 	while (!sim->stop)
 	{
-		if (try_lock_resources(coder, sim, coder->id - 1))
+		if (lock_dongles(coder, sim, coder->id - 1))
 			return (pthread_mutex_unlock(&sim->lock), 1);
 		gettimeofday(&tv, NULL);
 		ts.tv_sec = tv.tv_sec;
@@ -77,9 +77,9 @@ static int	grab_dongles(t_coder *coder)
 	return (0);
 }
 
-static int	do_coder_tasks(t_coder *coder, t_sim *sim)
+static int	coder_cycle(t_coder *coder, t_sim *sim)
 {
-	if (!grab_dongles(coder))
+	if (!take_dongles(coder))
 		return (0);
 	print_log(sim, coder->id, "has taken a dongle");
 	print_log(sim, coder->id, "has taken a dongle");
@@ -88,7 +88,7 @@ static int	do_coder_tasks(t_coder *coder, t_sim *sim)
 	pthread_mutex_lock(&sim->lock);
 	coder->compiles++;
 	pthread_mutex_unlock(&sim->lock);
-	release_dongles(coder);
+	unlock_dongles(coder);
 	if (check_stop(sim))
 		return (0);
 	pthread_mutex_lock(&sim->lock);
@@ -121,7 +121,7 @@ void	*coder_thread(void *arg)
 	}
 	while (!check_stop(sim))
 	{
-		if (!do_coder_tasks(coder, sim))
+		if (!coder_cycle(coder, sim))
 			break ;
 	}
 	return (NULL);

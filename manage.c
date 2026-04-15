@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   manage.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:39 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/14 15:21:27 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/15 13:21:07 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,14 +40,14 @@ static int	check_burnout(t_sim *sim)
 {
 	int		i;
 	int		id;
-	long	elapsed;
+	long	time_passed;
 
 	pthread_mutex_lock(&sim->lock);
 	i = 0;
 	while (i < sim->n)
 	{
-		elapsed = now_ms(sim) - sim->coders[i].last_compile;
-		if (elapsed >= sim->burnout)
+		time_passed = now_ms(sim) - sim->coders[i].last_compile;
+		if (time_passed >= sim->burnout)
 		{
 			id = sim->coders[i].id;
 			pthread_mutex_unlock(&sim->lock);
@@ -68,7 +68,7 @@ void	*manage_thread(void *arg)
 	sim = (t_sim *)arg;
 	while (1)
 	{
-		usleep(1000);
+		ft_sleep(1);
 		pthread_mutex_lock(&sim->lock);
 		if (sim->stop)
 			return (pthread_mutex_unlock(&sim->lock), NULL);

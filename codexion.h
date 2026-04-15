@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/14 16:00:06 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/15 14:48:14 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,7 +66,7 @@ void					*coder_thread(void *arg);
 void					*manage_thread(void *arg);
 int						is_valid(const char *s);
 int						parse(t_sim *sim, int ac, char **av);
-int						has_priority(t_sim *sim, int a, int b);
-void					release_dongles(t_coder *coder);
+int						can_go_first(t_sim *sim, int a, int b);
+void					unlock_dongles(t_coder *coder);
 
 #endif

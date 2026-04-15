@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parce.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:20:05 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/14 13:44:19 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/15 15:18:42 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ static int	check_overflow(t_sim *sim)
 	return (0);
 }
 
-static int	my_atoi(const char *str, char *type)
+static long	my_atoi(const char *str, char *type)
 {
 	int				i;
 	unsigned long	res;

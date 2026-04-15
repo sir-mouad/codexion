@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   coder_utils.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/08 10:39:07 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/14 15:58:28 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/15 15:21:34 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	release_dongles(t_coder *coder)
+void	unlock_dongles(t_coder *coder)
 {
 	t_sim	*sim;
 	long	free_at;
@@ -28,14 +28,14 @@ void	release_dongles(t_coder *coder)
 	pthread_mutex_unlock(&sim->lock);
 }
 
-int	has_priority(t_sim *sim, int a, int b)
+int	can_go_first(t_sim *sim, int a, int b)
 {
 	t_coder	*ca;
 	t_coder	*cb;
 
 	ca = &sim->coders[a];
 	cb = &sim->coders[b];
-	if (cb->state != 0)
+	if (strcmp(cb->state, "WAITING") != 0)
 		return (1);
 	if (sim->edf)
 		return (ca->last_compile <= cb->last_compile);
