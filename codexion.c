@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/14 16:01:45 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/16 20:47:33 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,7 @@ static void	sim_init(t_sim *sim)
 		sim->coders[i].state = "WAITING";
 		sim->coders[i].compiles = 0;
 		sim->coders[i].last_compile = 0;
+		sim->coders[i].deadline = sim->burnout;
 		sim->coders[i].waiting_since = 0;
 		sim->coders[i].sim = sim;
 		i++;
@@ -57,7 +58,8 @@ static int	init(t_sim *sim)
 	struct timeval	tv;
 
 	gettimeofday(&tv, NULL);
-	sim->start = tv.tv_sec * 1000L + tv.tv_usec / 1000L;
+	sim->start_ms = tv.tv_sec * 1000L + tv.tv_usec / 1000L;
+	sim->start_micro = tv.tv_sec * 1000000L + tv.tv_usec;
 	sim->stop = 0;
 	sim->coders = malloc(sizeof(t_coder) * sim->n);
 	sim->dongle_taken = malloc(sizeof(int) * sim->n);
@@ -65,6 +67,11 @@ static int	init(t_sim *sim)
 	if (!sim->coders || !sim->dongle_taken || !sim->dongle_free_at)
 		return (fprintf(stderr, "Error: malloc failed\n"), 0);
 	sim_init(sim);
+	sim->heap.array = malloc(sizeof(int) * sim->n);
+	sim->heap.current_size = 0;
+	sim->heap.size = sim->n;
+	if (!sim->heap.array)
+		return (fprintf(stderr, "Error: malloc failed\n"), 0);
 	if (pthread_mutex_init(&sim->lock, NULL) != 0
 		|| pthread_mutex_init(&sim->print_lock, NULL) != 0
 		|| pthread_cond_init(&sim->cond, NULL) != 0)
@@ -113,7 +120,7 @@ int	main(int ac, char **av)
 		return (1);
 	if (create_coder_thread(&sim))
 		return (1);
-	if (pthread_create(&sim.monitor, NULL, manage_thread, &sim) != 0)
+	if (pthread_create(&sim.monitor, NULL, monitor_thread, &sim) != 0)
 		return (fprintf(stderr, "Error: monitor_create failed\n"), 1);
 	i = 0;
 	while (i < sim.n)

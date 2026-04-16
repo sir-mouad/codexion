@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   manage.c                                           :+:      :+:    :+:   */
+/*   monitor.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:39 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/15 13:21:07 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/16 20:46:43 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static int	check_burnout(t_sim *sim)
 	i = 0;
 	while (i < sim->n)
 	{
-		time_passed = now_ms(sim) - sim->coders[i].last_compile;
+		time_passed = now_time(sim, "ms") - sim->coders[i].last_compile;
 		if (time_passed >= sim->burnout)
 		{
 			id = sim->coders[i].id;
@@ -61,7 +61,7 @@ static int	check_burnout(t_sim *sim)
 	return (0);
 }
 
-void	*manage_thread(void *arg)
+void	*monitor_thread(void *arg)
 {
 	t_sim	*sim;
 

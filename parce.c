@@ -6,7 +6,7 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:20:05 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/15 15:18:42 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/16 20:48:48 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,9 +32,8 @@ int	is_valid(const char *s)
 
 static int	check_overflow(t_sim *sim)
 {
-	if ((sim->n == -1) || (sim->burnout == -1)
-		|| (sim->t_compile == -1) || (sim->t_debug == -1)
-		|| (sim->t_refactor == -1) || (sim->need == -1)
+	if ((sim->n == -1) || (sim->burnout == -1) || (sim->t_compile == -1)
+		|| (sim->t_debug == -1) || (sim->t_refactor == -1) || (sim->need == -1)
 		|| (sim->cooldown == -1))
 		return (1);
 	return (0);
@@ -84,9 +83,9 @@ int	parse(t_sim *sim, int ac, char **av)
 	if (check_overflow(sim))
 		return (fprintf(stderr, "Error: overflow problem\n"), 0);
 	if (strcmp(av[8], "fifo") == 0)
-		sim->edf = 0;
+		sim->scheduler = "fifo";
 	else if (strcmp(av[8], "edf") == 0)
-		sim->edf = 1;
+		sim->scheduler = "edf";
 	else
 		return (fprintf(stderr, "Error: scheduler must be fifo or edf\n"), 0);
 	if (sim->n < 1)

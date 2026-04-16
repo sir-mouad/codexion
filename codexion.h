@@ -6,20 +6,20 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/15 14:48:14 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/16 20:46:24 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef CODEXION_H
 # define CODEXION_H
 
+# include <limits.h>
 # include <pthread.h>
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
 # include <sys/time.h>
 # include <unistd.h>
-# include <limits.h>
 
 typedef struct s_sim	t_sim;
 
@@ -31,10 +31,18 @@ typedef struct s_coder
 	char				*state;
 	int					compiles;
 	long				last_compile;
+	long				deadline;
 	long				waiting_since;
 	t_sim				*sim;
 	pthread_t			thread;
 }						t_coder;
+
+typedef struct s_heap
+{
+	int					*array;
+	int					current_size;
+	int					size;
+}						t_heap;
 
 struct					s_sim
 {
@@ -45,8 +53,9 @@ struct					s_sim
 	long				t_refactor;
 	int					need;
 	long				cooldown;
-	int					edf;
+	char				*scheduler;
 	t_coder				*coders;
+	t_heap				heap;
 	int					*dongle_taken;
 	long				*dongle_free_at;
 	pthread_mutex_t		lock;
@@ -54,16 +63,17 @@ struct					s_sim
 	pthread_mutex_t		print_lock;
 	pthread_t			monitor;
 	int					stop;
-	long				start;
+	long				start_ms;
+	long				start_micro;
 };
 
-long					now_ms(t_sim *sim);
+long					now_time(t_sim *sim, char *unit);
 void					ft_sleep(long ms);
 void					print_log(t_sim *sim, int id, char *msg);
 void					print_burnout(t_sim *sim, int id);
 int						check_stop(t_sim *sim);
 void					*coder_thread(void *arg);
-void					*manage_thread(void *arg);
+void					*monitor_thread(void *arg);
 int						is_valid(const char *s);
 int						parse(t_sim *sim, int ac, char **av);
 int						can_go_first(t_sim *sim, int a, int b);

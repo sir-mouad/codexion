@@ -6,7 +6,7 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/08 10:39:07 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/15 15:21:34 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/16 20:44:04 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ void	unlock_dongles(t_coder *coder)
 	long	free_at;
 
 	sim = coder->sim;
-	free_at = now_ms(sim) + sim->cooldown;
+	free_at = now_time(sim, "ms") + sim->cooldown;
 	pthread_mutex_lock(&sim->lock);
 	sim->dongle_taken[coder->left] = 0;
 	sim->dongle_taken[coder->right] = 0;
@@ -37,7 +37,7 @@ int	can_go_first(t_sim *sim, int a, int b)
 	cb = &sim->coders[b];
 	if (strcmp(cb->state, "WAITING") != 0)
 		return (1);
-	if (sim->edf)
+	if (strcmp(sim->scheduler, "edf") == 0)
 		return (ca->last_compile <= cb->last_compile);
 	return (ca->waiting_since <= cb->waiting_since);
 }
