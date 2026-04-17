@@ -3,29 +3,51 @@
 /*                                                        :::      ::::::::   */
 /*   coder.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:16 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/17 13:34:37 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/17 18:44:35 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-static int	can_take(t_sim *sim, int id)
+static int	can_take(t_sim *sim, int idx)
 {
 	int		left;
 	int		right;
 	long	ms;
 
-	left = sim->coders[id].left;
-	right = sim->coders[id].right;
+	left = sim->coders[idx].left;
+	right = sim->coders[idx].right;
 	ms = now_time(sim, "ms");
-	if (sim->dongle_taken[left] || ms < sim->dongle_free_at[left])
-		return (0);
-	if (sim->dongle_taken[right] || ms < sim->dongle_free_at[right])
-		return (0);
-	if (heap_top(sim) != id -1)
+	if (left < right)
+	{
+		pthread_mutex_lock(&sim->dongle_lock[left]);
+		pthread_mutex_lock(&sim->dongle_lock[right]);
+		if (sim->dongle_taken[left] || ms < sim->dongle_free_at[left])
+			return (pthread_mutex_unlock(&sim->dongle_lock[right]),
+					pthread_mutex_unlock(&sim->dongle_lock[left]), 0);
+		if (sim->dongle_taken[right] || ms < sim->dongle_free_at[right])
+			return (pthread_mutex_unlock(&sim->dongle_lock[right]),
+					pthread_mutex_unlock(&sim->dongle_lock[left]), 0);
+		pthread_mutex_unlock(&sim->dongle_lock[right]);
+		pthread_mutex_unlock(&sim->dongle_lock[left]);
+	}
+	else
+	{
+		pthread_mutex_lock(&sim->dongle_lock[right]);
+		pthread_mutex_lock(&sim->dongle_lock[left]);
+		if (sim->dongle_taken[left] || ms < sim->dongle_free_at[left])
+			return (pthread_mutex_unlock(&sim->dongle_lock[left]),
+					pthread_mutex_unlock(&sim->dongle_lock[right]), 0);
+		if (sim->dongle_taken[right] || ms < sim->dongle_free_at[right])
+			return (pthread_mutex_unlock(&sim->dongle_lock[left]),
+					pthread_mutex_unlock(&sim->dongle_lock[right]), 0);
+		pthread_mutex_unlock(&sim->dongle_lock[left]);
+		pthread_mutex_unlock(&sim->dongle_lock[right]);
+	}
+	if (heap_top(sim) != idx)
 		return (0);
 	return (1);
 }
@@ -38,8 +60,24 @@ static int	lock_dongles(t_coder *coder, t_sim *sim, int idx)
 		coder->state = "COMPILING";
 		coder->last_compile = now_time(sim, "ms");
 		coder->deadline = coder->last_compile + sim->burnout;
-		sim->dongle_taken[coder->left] = 1;
-		sim->dongle_taken[coder->right] = 1;
+		if (coder-> left < coder->right)
+		{
+			pthread_mutex_lock(&sim->dongle_lock[coder->left]);
+			pthread_mutex_lock(&sim->dongle_lock[coder->right]);
+			sim->dongle_taken[coder->left] = 1;
+			sim->dongle_taken[coder->right] = 1;
+			pthread_mutex_unlock(&sim->dongle_lock[coder->right]);
+			pthread_mutex_unlock(&sim->dongle_lock[coder->left]);
+		}
+		else
+		{
+			pthread_mutex_lock(&sim->dongle_lock[coder->right]);
+			pthread_mutex_lock(&sim->dongle_lock[coder->left]);
+			sim->dongle_taken[coder->left] = 1;
+			sim->dongle_taken[coder->right] = 1;
+			pthread_mutex_unlock(&sim->dongle_lock[coder->left]);
+			pthread_mutex_unlock(&sim->dongle_lock[coder->right]);
+		}
 		return (1);
 	}
 	return (0);

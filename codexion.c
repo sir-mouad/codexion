@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/17 14:23:35 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/17 17:25:15 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,23 +14,29 @@
 
 static void	cleanup(t_sim *sim, int free_all)
 {
+	int i;
 	if (!free_all)
 	{
 		free(sim->coders);
 		free(sim->dongle_taken);
 		free(sim->dongle_free_at);
 		free(sim->heap.array);
+		return;
 	}
-	else
+	pthread_mutex_destroy(&sim->lock);
+	pthread_mutex_destroy(&sim->print_lock);
+	pthread_cond_destroy(&sim->cond);
+	free(sim->coders);
+	free(sim->dongle_taken);
+	free(sim->dongle_free_at);
+	free(sim->heap.array);
+	i = 0;
+	while (i < sim->n)
 	{
-		pthread_mutex_destroy(&sim->lock);
-		pthread_mutex_destroy(&sim->print_lock);
-		pthread_cond_destroy(&sim->cond);
-		free(sim->coders);
-		free(sim->dongle_taken);
-		free(sim->dongle_free_at);
-		free(sim->heap.array);
+		pthread_mutex_destroy(&sim->dongle_lock[i]);
+		i++;
 	}
+	free(sim->dongle_lock);
 }
 
 static void	sim_init(t_sim *sim)
@@ -58,6 +64,7 @@ static void	sim_init(t_sim *sim)
 static int	init(t_sim *sim)
 {
 	struct timeval	tv;
+	int				i;
 
 	gettimeofday(&tv, NULL);
 	sim->start_ms = tv.tv_sec * 1000L + tv.tv_usec / 1000L;
@@ -66,7 +73,9 @@ static int	init(t_sim *sim)
 	sim->coders = malloc(sizeof(t_coder) * sim->n);
 	sim->dongle_taken = malloc(sizeof(int) * sim->n);
 	sim->dongle_free_at = malloc(sizeof(long) * sim->n);
-	if (!sim->coders || !sim->dongle_taken || !sim->dongle_free_at)
+	sim->dongle_lock = malloc(sizeof(pthread_mutex_t) * sim->n); 
+	if (!sim->coders || !sim->dongle_taken
+		|| !sim->dongle_free_at || !sim->dongle_lock)
 		return (fprintf(stderr, "Error: malloc failed\n"), 0);
 	sim_init(sim);
 	sim->heap.array = malloc(sizeof(int) * sim->n);
@@ -79,6 +88,14 @@ static int	init(t_sim *sim)
 		|| pthread_cond_init(&sim->cond, NULL) != 0)
 		return (cleanup(sim, 0), fprintf(stderr,
 				"Error: mutex or cond failed\n"), 0);
+	i = 0;
+	while(i < sim->n)
+	{
+		if (pthread_mutex_init(&sim->dongle_lock, NULL) != 0)
+			return(fprintf(stderr, "Error: mutex or cond failed\n"),
+					cleanup(sim, 1), 0);
+		i++;
+	}
 	return (1);
 }
 

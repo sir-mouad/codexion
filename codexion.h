@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
+/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/17 14:12:27 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/17 17:13:11 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ struct					s_sim
 	pthread_mutex_t		lock;
 	pthread_cond_t		cond;
 	pthread_mutex_t		print_lock;
+	pthread_mutex_t		*dongle_lock;
 	pthread_t			monitor;
 	int					stop;
 	long				start_ms;
