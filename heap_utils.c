@@ -6,13 +6,13 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/16 20:49:29 by mouad             #+#    #+#             */
-/*   Updated: 2026/04/16 20:53:47 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/17 14:18:49 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	heapify_up(t_sim *sim)
+static void	heap_up(t_sim *sim)
 {
 	t_heap	*heap;
 	t_coder	*coders;
@@ -57,7 +57,7 @@ void	heapify_up(t_sim *sim)
 	}
 }
 
-void	heapify_down(t_sim *sim)
+static void	heap_down(t_sim *sim)
 {
 	t_heap	*heap;
 	t_coder	*coders;
@@ -115,7 +115,7 @@ void	heap_add(t_sim *sim, int idx)
 	{
 		heap->array[*current_size] = idx;
 		(*current_size)++;
-		heapify_up(sim);
+		heap_up(sim);
 	}
 }
 
@@ -137,6 +137,16 @@ void	heap_rm_top(t_sim *sim)
 	{
 		heap->array[0] = heap->array[*current_size - 1];
 		(*current_size)--;
-		heapify_down(sim);
+		heap_down(sim);
 	}
+}
+
+int heap_top(t_sim *sim)
+{
+	t_heap heap;
+
+	heap = sim->heap;
+	if (heap.current_size == 0)
+		return (-1);
+	return (heap.array[0]);	
 }

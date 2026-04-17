@@ -6,7 +6,7 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:16 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/16 20:44:00 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/17 13:34:37 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,30 +16,25 @@ static int	can_take(t_sim *sim, int id)
 {
 	int		left;
 	int		right;
-	int		ln;
-	int		rn;
 	long	ms;
 
 	left = sim->coders[id].left;
 	right = sim->coders[id].right;
-	ln = (id - 1 + sim->n) % sim->n;
-	rn = (id + 1) % sim->n;
 	ms = now_time(sim, "ms");
 	if (sim->dongle_taken[left] || ms < sim->dongle_free_at[left])
 		return (0);
 	if (sim->dongle_taken[right] || ms < sim->dongle_free_at[right])
 		return (0);
-	if (!can_go_first(sim, id, ln))
-		return (0);
-	if (!can_go_first(sim, id, rn))
+	if (heap_top(sim) != id -1)
 		return (0);
 	return (1);
 }
 
-static int	lock_dongles(t_coder *coder, t_sim *sim, int id)
+static int	lock_dongles(t_coder *coder, t_sim *sim, int idx)
 {
-	if (can_take(sim, id))
+	if (can_take(sim, idx))
 	{
+		heap_rm_top(sim);
 		coder->state = "COMPILING";
 		coder->last_compile = now_time(sim, "ms");
 		coder->deadline = coder->last_compile + sim->burnout;
@@ -60,6 +55,7 @@ static int	take_dongles(t_coder *coder)
 	pthread_mutex_lock(&sim->lock);
 	coder->state = "WAITING";
 	coder->waiting_since = now_time(sim, "micro");
+	heap_add(sim, coder->id - 1);
 	while (!sim->stop)
 	{
 		if (lock_dongles(coder, sim, coder->id - 1))

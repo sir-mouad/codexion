@@ -6,7 +6,7 @@
 /*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/16 20:47:33 by mouad            ###   ########.fr       */
+/*   Updated: 2026/04/17 14:23:35 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@ static void	cleanup(t_sim *sim, int free_all)
 		free(sim->coders);
 		free(sim->dongle_taken);
 		free(sim->dongle_free_at);
+		free(sim->heap.array);
 	}
 	else
 	{
@@ -28,6 +29,7 @@ static void	cleanup(t_sim *sim, int free_all)
 		free(sim->coders);
 		free(sim->dongle_taken);
 		free(sim->dongle_free_at);
+		free(sim->heap.array);
 	}
 }
 
@@ -121,7 +123,7 @@ int	main(int ac, char **av)
 	if (create_coder_thread(&sim))
 		return (1);
 	if (pthread_create(&sim.monitor, NULL, monitor_thread, &sim) != 0)
-		return (fprintf(stderr, "Error: monitor_create failed\n"), 1);
+		return (fprintf(stderr, "Error: monitor_create failed\n"), cleanup(&sim, 1), 1);
 	i = 0;
 	while (i < sim.n)
 	{
