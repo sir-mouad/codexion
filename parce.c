@@ -6,13 +6,13 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:20:05 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/18 20:26:45 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/20 08:18:03 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-int	is_valid(const char *s)
+static int	is_valid(const char *s)
 {
 	int	i;
 

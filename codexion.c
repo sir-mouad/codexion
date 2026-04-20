@@ -6,7 +6,7 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/18 20:27:16 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/20 10:09:21 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,26 +39,35 @@ void	cleanup(t_sim *sim, int free_all)
 	free(sim->dongle_lock);
 }
 
+static void	signal_stop(t_sim *sim)
+{
+	pthread_mutex_lock(&sim->lock);
+	sim->stop = 1;
+	pthread_cond_broadcast(&sim->cond);
+	pthread_mutex_unlock(&sim->lock);
+}
+
+static void	stop_simulation(t_sim *sim, int start, int end)
+{
+	signal_stop(sim);
+	while (start < end)
+	{
+		pthread_join(sim->coders[start].thread, NULL);
+		start++;
+	}
+}
+
 static int	create_coder_thread(t_sim *sim)
 {
-	int (i), (j);
+	int	i;
+
 	i = 0;
-	j = 0;
 	while (i < sim->n)
 	{
 		if (pthread_create(&sim->coders[i].thread, NULL, coder_thread,
 				&sim->coders[i]) != 0)
 		{
-			pthread_mutex_lock(&sim->lock);
-			sim->stop = 1;
-			pthread_cond_broadcast(&sim->cond);
-			pthread_mutex_unlock(&sim->lock);
-			j = 0;
-			while (j < i)
-			{
-				pthread_join(sim->coders[j].thread, NULL);
-				j++;
-			}
+			stop_simulation(sim, 0, i);
 			return (fprintf(stderr, "Error: pthread_create failed\n"),
 				cleanup(sim, 1), 1);
 		}
@@ -80,16 +89,18 @@ int	main(int ac, char **av)
 	if (create_coder_thread(&sim))
 		return (1);
 	if (pthread_create(&sim.monitor, NULL, monitor_thread, &sim) != 0)
-		return (fprintf(stderr, "Error: monitor_create failed\n"), cleanup(&sim,
-				1), 1);
+		return (stop_simulation(&sim, 0, sim.n), fprintf(stderr,
+				"Error: monitor_create failed\n"), cleanup(&sim, 1), 1);
 	i = 0;
 	while (i < sim.n)
 	{
 		if (pthread_join(sim.coders[i].thread, NULL) != 0)
-			return (fprintf(stderr, "Error: pthread_join failed\n"), 1);
+			return (signal_stop(&sim), fprintf(stderr,
+					"Error: pthread_join failed\n"), 1);
 		i++;
 	}
 	if (pthread_join(sim.monitor, NULL) != 0)
-		return (fprintf(stderr, "Error: pthread_join failed\n"), 1);
+		return (signal_stop(&sim), fprintf(stderr,
+				"Error: pthread_join failed\n"), 1);
 	return (cleanup(&sim, 1), 0);
 }

@@ -6,7 +6,7 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/18 20:27:11 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/04/20 08:18:22 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,7 +75,6 @@ void					print_burnout(t_sim *sim, int id);
 int						check_stop(t_sim *sim);
 void					*coder_thread(void *arg);
 void					*monitor_thread(void *arg);
-int						is_valid(const char *s);
 int						parse(t_sim *sim, int ac, char **av);
 int						heap_top(t_sim *sim);
 void					heap_rm_top(t_sim *sim);

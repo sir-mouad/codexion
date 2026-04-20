@@ -1,8 +1,8 @@
 NAME	= codexion
 CC		= cc
 CFLAGS	= -Wall -Wextra -Werror
-SRCS	= codexion.c utils.c coder.c monitor.c parce.c \
-		 coder_utils.c heap.c heap_utils.c init.c
+SRCS	= codexion.c utils1.c coder.c monitor.c parce.c \
+			heap.c init.c utils2.c
 OBJS	= $(SRCS:.c=.o)
 
 .: all clean
