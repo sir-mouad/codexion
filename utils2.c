@@ -42,7 +42,17 @@ int	is_higher(t_sim *sim, int a, int b)
 		return (coders[array[a]].waiting_since
 			< coders[array[b]].waiting_since);
 	if (strcmp(sim->scheduler, "edf") == 0)
+	{
+		if (coders[array[a]].deadline == coders[array[b]].deadline)
+		{
+			if (coders[array[a]].waiting_since
+				== coders[array[b]].waiting_since)
+				return (coders[array[a]].id < coders[array[b]].id);
+			return (coders[array[a]].waiting_since
+				< coders[array[b]].waiting_since);
+		}
 		return (coders[array[a]].deadline
 			< coders[array[b]].deadline);
+	}
 	return (0);
 }
