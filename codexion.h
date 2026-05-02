@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.h                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:35 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/20 08:18:22 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/05/02 13:00:54 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,7 +80,7 @@ int						heap_top(t_sim *sim);
 void					heap_rm_top(t_sim *sim);
 void					heap_add(t_sim *sim, int idx);
 int						init(t_sim *sim);
-void					cleanup(t_sim *sim, int free_all);
+void					cleanup(t_sim *sim, int free_all, int initialized);
 void					find_first(t_coder *coder, int *first, int *second);
 int						is_higher(t_sim *sim, int a, int b);
 

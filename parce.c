@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parce.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:20:05 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/20 08:18:03 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/05/02 12:41:00 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,7 +67,7 @@ static long	my_atoi(const char *str, char *type)
 int	parse(t_sim *sim, int ac, char **av)
 {
 	if (ac != 9)
-		return (fprintf(stderr, "./codexion n burnout compile",
+		return (fprintf(stderr, "./codexion n burnout compile"
 				" debug refactor need cooldown [fifo|edf]\n"), 0);
 	if (!is_valid(av[1]) || !is_valid(av[2]) || !is_valid(av[3])
 		|| !is_valid(av[4]) || !is_valid(av[5]) || !is_valid(av[6])
@@ -79,8 +79,6 @@ int	parse(t_sim *sim, int ac, char **av)
 	sim->t_debug = my_atoi(av[4], "long");
 	sim->t_refactor = my_atoi(av[5], "long");
 	sim->need = my_atoi(av[6], "int");
-	if (sim->need == 0)
-		return (0);
 	sim->cooldown = my_atoi(av[7], "long");
 	if (check_overflow(sim))
 		return (fprintf(stderr, "Error: overflow problem\n"), 0);

@@ -3,19 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   codexion.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:31 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/20 10:09:21 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/05/02 13:42:50 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "codexion.h"
 
-void	cleanup(t_sim *sim, int free_all)
+void	cleanup(t_sim *sim, int free_all, int initialized)
 {
-	int	i;
-
 	if (!free_all)
 	{
 		free(sim->coders);
@@ -30,11 +28,10 @@ void	cleanup(t_sim *sim, int free_all)
 	free(sim->dongle_taken);
 	free(sim->dongle_free_at);
 	free(sim->heap.array);
-	i = 0;
-	while (i < sim->n)
+	while (initialized > 0)
 	{
-		pthread_mutex_destroy(&sim->dongle_lock[i]);
-		i++;
+		initialized--;
+		pthread_mutex_destroy(&sim->dongle_lock[initialized]);
 	}
 	free(sim->dongle_lock);
 }
@@ -69,7 +66,7 @@ static int	create_coder_thread(t_sim *sim)
 		{
 			stop_simulation(sim, 0, i);
 			return (fprintf(stderr, "Error: pthread_create failed\n"),
-				cleanup(sim, 1), 1);
+				cleanup(sim, 1, sim->n), 1);
 		}
 		i++;
 	}
@@ -84,13 +81,13 @@ int	main(int ac, char **av)
 	memset(&sim, 0, sizeof(t_sim));
 	if (!parse(&sim, ac, av))
 		return (1);
-	if (!init(&sim))
-		return (1);
-	if (create_coder_thread(&sim))
+	if (sim.need == 0)
+		return (0);
+	if (!init(&sim) || create_coder_thread(&sim))
 		return (1);
 	if (pthread_create(&sim.monitor, NULL, monitor_thread, &sim) != 0)
 		return (stop_simulation(&sim, 0, sim.n), fprintf(stderr,
-				"Error: monitor_create failed\n"), cleanup(&sim, 1), 1);
+				"Error: monitor_create failed\n"), cleanup(&sim, 1, sim.n), 1);
 	i = 0;
 	while (i < sim.n)
 	{
@@ -102,5 +99,5 @@ int	main(int ac, char **av)
 	if (pthread_join(sim.monitor, NULL) != 0)
 		return (signal_stop(&sim), fprintf(stderr,
 				"Error: pthread_join failed\n"), 1);
-	return (cleanup(&sim, 1), 0);
+	return (cleanup(&sim, 1, sim.n), 0);
 }

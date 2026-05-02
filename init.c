@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: mouad <mouad@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/18 14:46:55 by mouad             #+#    #+#             */
-/*   Updated: 2026/04/18 20:27:01 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/05/02 13:39:00 by mouad            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,16 +45,25 @@ static int	mutex_cond_init(t_sim *sim)
 	if (pthread_mutex_init(&sim->lock, NULL) != 0
 		|| pthread_mutex_init(&sim->print_lock, NULL) != 0
 		|| pthread_cond_init(&sim->cond, NULL) != 0)
-		return (cleanup(sim, 0), free(sim->heap.array), fprintf(stderr,
+		return (cleanup(sim, 0, 0), free(sim->heap.array), fprintf(stderr,
 				"Error: mutex or cond failed\n"), 0);
 	while (i < sim->n)
 	{
 		if (pthread_mutex_init(&sim->dongle_lock[i], NULL) != 0)
-			return (fprintf(stderr, "Error: mutex failed\n"), cleanup(sim, 1),
-				0);
+			return (fprintf(stderr, "Error: mutex failed\n"),
+				cleanup(sim, 1, i), 0);
 		i++;
 	}
 	return (1);
+}
+
+static void	free_mallocs(t_sim *sim)
+{
+	free(sim->coders);
+	free(sim->dongle_taken);
+	free(sim->dongle_free_at);
+	free(sim->dongle_lock);
+	free(sim->heap.array);
 }
 
 int	init(t_sim *sim)
@@ -70,11 +79,13 @@ int	init(t_sim *sim)
 	sim->dongle_lock = malloc(sizeof(pthread_mutex_t) * sim->n);
 	if (!sim->coders || !sim->dongle_taken || !sim->dongle_free_at
 		|| !sim->dongle_lock)
-		return (fprintf(stderr, "Error: malloc failed\n"), 0);
+		return (fprintf(stderr, "Error: malloc failed\n"),
+			free_mallocs(sim), 0);
 	sim_init(sim);
 	sim->heap.array = malloc(sizeof(int) * sim->n);
 	if (!sim->heap.array)
-		return (fprintf(stderr, "Error: malloc failed\n"), cleanup(sim, 0), 0);
+		return (fprintf(stderr, "Error: malloc failed\n"),
+			cleanup(sim, 0, sim->n), 0);
 	if (!mutex_cond_init(sim))
 		return (0);
 	return (1);

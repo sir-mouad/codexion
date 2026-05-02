@@ -1,11 +1,11 @@
 NAME	= codexion
 CC		= cc
-CFLAGS	= -Wall -Wextra -Werror
+CFLAGS	= -Wall -Wextra -Werror -pthread
 SRCS	= codexion.c utils1.c coder.c monitor.c parce.c \
 			heap.c init.c utils2.c
 OBJS	= $(SRCS:.c=.o)
 
-.: all clean
+#.: all clean
 all: $(NAME)
 
 $(NAME): $(OBJS)
