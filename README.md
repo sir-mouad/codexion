@@ -172,10 +172,8 @@ For EDF, it compares `deadline`, then `waiting_since`, then coder id.
 - POSIX Threads Programming: https://hpc-tutorials.llnl.gov/posix/
 - POSIX pthread specification: https://pubs.opengroup.org/onlinepubs/9699919799/basedefs/pthread.h.html
 - Linux man pages: https://man7.org/linux/man-pages/
-- GNU Make manual: https://www.gnu.org/software/make/manual/make.html
 ### References
 - Dining Philosophers Problem: https://en.wikipedia.org/wiki/Dining_philosophers_problem
-- Earliest Deadline First Scheduling: https://en.wikipedia.org/wiki/Earliest_deadline_first_scheduling
 - Deadlock and Coffman Conditions: https://en.wikipedia.org/wiki/Deadlock
 ### AI Usage
 AI tools were used to understand the subject and discuss synchronization.
