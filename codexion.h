@@ -28,7 +28,6 @@ typedef struct s_coder
 	int					id;
 	int					left;
 	int					right;
-	char				*state;
 	int					compiles;
 	long				last_compile;
 	long				deadline;

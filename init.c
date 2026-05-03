@@ -25,7 +25,6 @@ static void	sim_init(t_sim *sim)
 		sim->coders[i].id = i + 1;
 		sim->coders[i].left = i;
 		sim->coders[i].right = (i + 1) % sim->n;
-		sim->coders[i].state = "WAITING";
 		sim->coders[i].compiles = 0;
 		sim->coders[i].last_compile = 0;
 		sim->coders[i].deadline = sim->burnout;

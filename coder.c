@@ -58,7 +58,6 @@ static int	lock_dongles(t_coder *coder, t_sim *sim, int idx)
 	sim->dongle_taken[left] = 1;
 	sim->dongle_taken[right] = 1;
 	heap_rm_top(sim);
-	coder->state = "COMPILING";
 	coder->last_compile = now_time(sim, "ms");
 	coder->deadline = coder->last_compile + sim->burnout;
 	pthread_mutex_unlock(&sim->dongle_lock[second]);
@@ -73,7 +72,6 @@ static int	take_dongles(t_coder *coder)
 
 	sim = coder->sim;
 	pthread_mutex_lock(&sim->lock);
-	coder->state = "WAITING";
 	coder->waiting_since = now_time(sim, "micro");
 	heap_add(sim, coder->id - 1);
 	while (!sim->stop)
@@ -109,14 +107,12 @@ static int	coder_cycle(t_coder *coder, t_sim *sim)
 	if (check_stop(sim))
 		return (0);
 	pthread_mutex_lock(&sim->lock);
-	coder->state = "DEBUGGING";
 	pthread_mutex_unlock(&sim->lock);
 	print_log(sim, coder->id, "is debugging");
 	ft_sleep(sim->t_debug);
 	if (check_stop(sim))
 		return (0);
 	pthread_mutex_lock(&sim->lock);
-	coder->state = "REFACTORING";
 	pthread_mutex_unlock(&sim->lock);
 	print_log(sim, coder->id, "is refactoring");
 	ft_sleep(sim->t_refactor);
