@@ -6,7 +6,7 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:42 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/20 08:15:52 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/05/07 18:55:43 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ void	ft_sleep(long ms)
 
 void	print_log(t_sim *sim, int id, char *msg)
 {
-	pthread_mutex_lock(&sim->lock);
-	pthread_mutex_lock(&sim->print_lock);
-	if (!sim->stop)
+	if (!check_stop(sim))
+	{
+		pthread_mutex_lock(&sim->print_lock);
 		printf("%ld %d %s\n", now_time(sim, "ms"), id, msg);
-	pthread_mutex_unlock(&sim->print_lock);
-	pthread_mutex_unlock(&sim->lock);
+		pthread_mutex_unlock(&sim->print_lock);
+	}
 }
 
 void	print_burnout(t_sim *sim, int id)

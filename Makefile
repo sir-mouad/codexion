@@ -1,11 +1,12 @@
 NAME	= codexion
 CC		= cc
+# HFLAG	= -fsanitize=thread
 CFLAGS	= -Wall -Wextra -Werror -pthread
-SRCS	= codexion.c utils1.c coder.c monitor.c parce.c \
+SRCS	= codexion.c utils1.c coder.c monitor.c parse.c \
 			heap.c init.c utils2.c
 OBJS	= $(SRCS:.c=.o)
 
-#.: all clean
+.: all clean
 all: $(NAME)
 
 $(NAME): $(OBJS)

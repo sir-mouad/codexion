@@ -6,7 +6,7 @@
 /*   By: mhadir <mhadir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/04/04 12:15:16 by mhadir            #+#    #+#             */
-/*   Updated: 2026/04/18 20:27:21 by mhadir           ###   ########.fr       */
+/*   Updated: 2026/05/07 17:41:34 by mhadir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ static int	lock_dongles(t_coder *coder, t_sim *sim, int idx)
 	ms = now_time(sim, "ms");
 	if (sim->dongle_taken[left] || ms < sim->dongle_free_at[left]
 		|| sim->dongle_taken[right] || ms < sim->dongle_free_at[right]
-		|| heap_top(sim) != idx)
+		|| heap_top(sim) != idx || coder->compiles >= sim->need)
 	{
 		pthread_mutex_unlock(&sim->dongle_lock[second]);
 		pthread_mutex_unlock(&sim->dongle_lock[first]);
