@@ -39,6 +39,7 @@ make re
 ```
 ### Usage
 ```bash
+./codexion 5 1000 100 100 100 3 60 fifo
 ./codexion number_of_coders time_to_burnout time_to_compile time_to_debug time_to_refactor number_of_compiles_required dongle_cooldown scheduler
 ```
 All arguments are mandatory.
